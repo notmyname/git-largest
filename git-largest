@@ -1,0 +1,14 @@
+#!/bin/sh
+
+COUNT=10
+if [ $# -gt 0 ]; then
+    COUNT=$1
+fi
+
+if [ ! -r .git/objects/pack/*.idx ]; then
+    git gc
+fi
+
+for n in `git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -n $COUNT | cut -d ' ' -f 1 `; do
+    git rev-list --objects --all | grep $n
+done
